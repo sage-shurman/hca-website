@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harvard Composers Association</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Monument+Extended&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --crimson: #A51C30;
+    --crimson-bright: #C41E3A;
+    --crimson-dim: #7A1525;
+    --cream: #F5EFE0;
+    --cream-dim: #D4C9A8;
+    --black: #080808;
+    --near-black: #0F0F0F;
+    --dark-gray: #1A1A1A;
+    --mid-gray: #2E2E2E;
+    --light-gray: #888;
+    --white: #FFFFFF;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: var(--font-display);
+    font-size: 18px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--crimson-bright);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, opacity 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(165,28,48,0.5);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.35s ease, width 0.3s, height 0.3s, border-color 0.3s;
+    transform: translate(-50%, -50%);
+  }
+
+  /* ========== NAVIGATION ========== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 4rem;
+    background: linear-gradient(to bottom, rgba(8,8,8,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(0px);
+    transition: background 0.4s, backdrop-filter 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(165,28,48,0.2);
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--cream);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .nav-logo-mark {
+    width: 32px; height: 32px;
+    border: 1px solid var(--crimson);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    color: var(--crimson);
+    letter-spacing: 0.05em;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--crimson-bright);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--cream); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active { color: var(--crimson-bright); }
+
+  /* ========== PAGES ========== */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ========== HOME PAGE ========== */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 4rem 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(165,28,48,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(165,28,48,0.08) 0%, transparent 50%),
+      linear-gradient(to bottom, rgba(8,8,8,0) 0%, rgba(8,8,8,0.8) 80%, var(--black) 100%);
+    z-index: 0;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(165,28,48,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(165,28,48,0.06) 1px, transparent 1px);
+    background-size: 80px 80px;
+    z-index: 0;
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.2) 70%, transparent 100%);
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--crimson-bright);
+    margin-bottom: 1.5rem;
+    position: relative; z-index: 1;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s ease forwards;
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 9vw, 9rem);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    position: relative; z-index: 1;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s ease forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--crimson-bright);
+  }
+  .hero-sub {
+    max-width: 520px;
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--cream-dim);
+    line-height: 1.7;
+    position: relative; z-index: 1;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s ease forwards;
+  }
+  .hero-actions {
+    margin-top: 3rem;
+    display: flex; gap: 1.5rem; align-items: center;
+    position: relative; z-index: 1;
+    opacity: 0;
+    animation: fadeUp 0.9s 1s ease forwards;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 0.85rem 2rem;
+    background: var(--crimson);
+    color: var(--cream);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--crimson);
+    transition: background 0.3s, color 0.3s, gap 0.3s;
+    cursor: none;
+  }
+  .btn-primary:hover { background: var(--crimson-bright); gap: 16px; }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 0.85rem 2rem;
+    background: transparent;
+    color: var(--cream-dim);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(213,202,168,0.3);
+    transition: border-color 0.3s, color 0.3s;
+    cursor: none;
+  }
+  .btn-ghost:hover { border-color: var(--cream-dim); color: var(--cream); }
+  .hero-scroll-hint {
+    position: absolute; bottom: 3rem; right: 4rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--light-gray);
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    display: flex; align-items: center; gap: 1rem;
+    z-index: 1;
+  }
+  .hero-scroll-hint::before {
+    content: '';
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--crimson));
+  }
+
+  /* Stave decoration */
+  .hero-stave {
+    position: absolute;
+    right: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 45%;
+    height: 300px;
+    z-index: 0;
+    opacity: 0.12;
+    overflow: hidden;
+  }
+  .stave-line {
+    position: absolute; left: 0; right: 0;
+    height: 1px;
+    background: var(--cream);
+  }
+
+  /* ========== SECTION STYLES ========== */
+  section { padding: 7rem 4rem; }
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--crimson-bright);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .section-label::before {
+    content: '';
+    width: 2rem; height: 1px;
+    background: var(--crimson-bright);
+    flex-shrink: 0;
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+  }
+  h2 em { font-style: italic; color: var(--crimson-bright); }
+
+  /* Mission section */
+  .mission-section {
+    background: var(--near-black);
+    border-top: 1px solid rgba(165,28,48,0.2);
+    border-bottom: 1px solid rgba(165,28,48,0.2);
+  }
+  .mission-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+  }
+  .mission-text p {
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: var(--cream-dim);
+    line-height: 1.8;
+    margin-bottom: 1.2rem;
+  }
+  .mission-pillars {
+    display: flex; flex-direction: column; gap: 1.2rem;
+  }
+  .pillar {
+    display: flex; gap: 1.2rem; align-items: flex-start;
+    padding: 1.2rem;
+    border: 1px solid rgba(165,28,48,0.15);
+    background: rgba(165,28,48,0.03);
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .pillar:hover {
+    border-color: rgba(165,28,48,0.4);
+    background: rgba(165,28,48,0.06);
+  }
+  .pillar-num {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--crimson-bright);
+    letter-spacing: 0.1em;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+  .pillar-text {
+    font-size: 0.95rem;
+    color: var(--cream-dim);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* ========== PROJECTS PAGE ========== */
+  .page-header {
+    padding: 12rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-header-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(165,28,48,0.12) 0%, transparent 70%);
+  }
+  .page-header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7vw, 7rem);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    position: relative; z-index: 1;
+  }
+  .page-header h1 em { font-style: italic; color: var(--crimson-bright); }
+  .page-header-sub {
+    font-size: 1.1rem;
+    color: var(--cream-dim);
+    font-weight: 300;
+    margin-top: 1.5rem;
+    max-width: 600px;
+    position: relative; z-index: 1;
+  }
+
+  .projects-grid {
+    padding: 2rem 4rem 7rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .project-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--near-black);
+    border: 1px solid rgba(165,28,48,0.1);
+    padding: 2.5rem;
+    transition: border-color 0.4s;
+    cursor: none;
+  }
+  .project-card:hover { border-color: rgba(165,28,48,0.4); }
+  .project-card:hover .project-bg { opacity: 1; }
+  .project-card:hover .project-arrow { transform: translateX(6px); opacity: 1; }
+  .project-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(165,28,48,0.08) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .project-year {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--crimson-bright);
+    letter-spacing: 0.15em;
+    margin-bottom: 2rem;
+  }
+  .project-type {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--light-gray);
+    margin-bottom: 0.8rem;
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid rgba(136,136,136,0.3);
+  }
+  .project-title {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    position: relative; z-index: 1;
+  }
+  .project-desc {
+    font-size: 0.92rem;
+    color: var(--cream-dim);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    position: relative; z-index: 1;
+  }
+  .project-collaborators {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--light-gray);
+    letter-spacing: 0.08em;
+    position: relative; z-index: 1;
+  }
+  .project-arrow {
+    position: absolute; bottom: 2.5rem; right: 2.5rem;
+    color: var(--crimson-bright);
+    font-size: 1.2rem;
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .project-card.featured {
+    grid-column: span 2;
+    background: linear-gradient(135deg, rgba(165,28,48,0.08) 0%, var(--near-black) 50%);
+    border-color: rgba(165,28,48,0.25);
+  }
+  .project-card.featured .project-title { font-size: 2.2rem; }
+
+  /* ========== TEAM PAGE ========== */
+  .team-section {
+    padding: 2rem 4rem 7rem;
+  }
+  .team-intro {
+    max-width: 700px;
+    margin-bottom: 4rem;
+    font-size: 1.1rem;
+    color: var(--cream-dim);
+    font-weight: 300;
+    line-height: 1.8;
+  }
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+  .team-card {
+    background: var(--near-black);
+    border: 1px solid rgba(165,28,48,0.1);
+    overflow: hidden;
+    transition: border-color 0.3s;
+    cursor: none;
+  }
+  .team-card:hover { border-color: rgba(165,28,48,0.35); }
+  .team-card:hover .team-card-inner { transform: translateY(-4px); }
+  .team-card-inner { transition: transform 0.3s ease; }
+  .team-avatar {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--dark-gray);
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .team-avatar-initials {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--crimson-bright);
+    opacity: 0.6;
+  }
+  .team-avatar-pattern {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(165,28,48,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(165,28,48,0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .team-info { padding: 1.5rem; }
+  .team-name {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+  }
+  .team-role {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--crimson-bright);
+    margin-bottom: 0.75rem;
+  }
+  .team-bio {
+    font-size: 0.85rem;
+    color: var(--cream-dim);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+  .team-advisor {
+    margin-top: 4rem;
+    padding-top: 3rem;
+    border-top: 1px solid rgba(165,28,48,0.2);
+  }
+  .advisor-card {
+    display: flex; gap: 3rem; align-items: center;
+    padding: 2.5rem;
+    border: 1px solid rgba(165,28,48,0.25);
+    background: rgba(165,28,48,0.03);
+    max-width: 700px;
+  }
+  .advisor-avatar {
+    width: 100px; height: 100px;
+    flex-shrink: 0;
+    background: var(--dark-gray);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-style: italic;
+    color: var(--crimson-bright);
+    border: 1px solid rgba(165,28,48,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  .advisor-avatar::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(165,28,48,0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(165,28,48,0.1) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  /* ========== CONTACT PAGE ========== */
+  .contact-section {
+    padding: 2rem 4rem 7rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    max-width: 1200px;
+  }
+  .contact-info h3 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+  }
+  .contact-info p {
+    font-size: 1rem;
+    color: var(--cream-dim);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+  .contact-detail {
+    display: flex; gap: 1rem; align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+  .contact-detail-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--crimson-bright);
+    min-width: 80px;
+    padding-top: 3px;
+  }
+  .contact-detail-value {
+    font-size: 1rem;
+    color: var(--cream-dim);
+    font-weight: 300;
+  }
+  .contact-form { display: flex; flex-direction: column; gap: 1.5rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+  .form-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+  }
+  .form-input, .form-textarea, .form-select {
+    background: var(--near-black);
+    border: 1px solid rgba(165,28,48,0.2);
+    color: var(--cream);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    padding: 0.85rem 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+    width: 100%;
+    -webkit-appearance: none;
+  }
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    border-color: var(--crimson-bright);
+  }
+  .form-textarea { resize: vertical; min-height: 140px; }
+  .form-select option { background: var(--near-black); }
+
+  /* ========== FEATURED PROJECTS (home) ========== */
+  .featured-section { background: var(--near-black); }
+  .featured-inner { max-width: 1200px; margin: 0 auto; }
+  .featured-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 3rem;
+  }
+  .featured-projects-preview {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .featured-preview-card {
+    background: var(--dark-gray);
+    border: 1px solid rgba(165,28,48,0.1);
+    padding: 2rem;
+    transition: border-color 0.3s, transform 0.3s;
+    cursor: none;
+  }
+  .featured-preview-card:hover {
+    border-color: rgba(165,28,48,0.35);
+    transform: translateY(-4px);
+  }
+  .preview-genre {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--crimson-bright);
+    margin-bottom: 1rem;
+  }
+  .preview-title {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+  .preview-desc {
+    font-size: 0.88rem;
+    color: var(--cream-dim);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  /* ========== FOOTER ========== */
+  footer {
+    background: var(--near-black);
+    border-top: 1px solid rgba(165,28,48,0.2);
+    padding: 3rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--cream-dim);
+  }
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--light-gray);
+  }
+  .footer-links {
+    display: flex; gap: 2rem; list-style: none;
+  }
+  .footer-links a {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--light-gray);
+    text-decoration: none;
+    transition: color 0.3s;
+    cursor: none;
+  }
+  .footer-links a:hover { color: var(--crimson-bright); }
+
+  /* ========== DIVIDER ========== */
+  .crimson-rule {
+    width: 60px; height: 1px;
+    background: var(--crimson-bright);
+    margin: 2rem 0;
+  }
+
+  /* ========== ANIMATIONS ========== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ========== NOISE OVERLAY ========== */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9997;
+    opacity: 0.4;
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAVIGATION -->
+<nav id="mainNav">
+  <a href="#" class="nav-logo" onclick="showPage('home'); return false;">
+    <div class="nav-logo-mark">HCA</div>
+    Harvard Composers Association
+  </a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('home'); return false;" id="nav-home" class="active">Home</a></li>
+    <li><a href="#" onclick="showPage('projects'); return false;" id="nav-projects">Projects</a></li>
+    <li><a href="#" onclick="showPage('team'); return false;" id="nav-team">The Team</a></li>
+    <li><a href="#" onclick="showPage('contact'); return false;" id="nav-contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ===== HOME PAGE ===== -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <!-- Stave decoration -->
+    <div class="hero-stave">
+      <div class="stave-line" style="top:20%"></div>
+      <div class="stave-line" style="top:35%"></div>
+      <div class="stave-line" style="top:50%"></div>
+      <div class="stave-line" style="top:65%"></div>
+      <div class="stave-line" style="top:80%"></div>
+    </div>
+    <p class="hero-eyebrow">Harvard University · Est. Cambridge, MA</p>
+    <h1 class="hero-title">Where New<br>Music Is <em>Built</em></h1>
+    <p class="hero-sub">The Harvard Composers Association advances student composition — fostering community, building interdisciplinary partnerships, and bringing ambitious new work to life.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary" onclick="showPage('projects'); return false;">Explore Projects →</a>
+      <a href="#" class="btn-ghost" onclick="showPage('contact'); return false;">Get Involved</a>
+    </div>
+    <div class="hero-scroll-hint">Scroll</div>
+  </section>
+
+  <!-- Mission -->
+  <section class="mission-section">
+    <div class="mission-inner">
+      <div class="mission-text">
+        <div class="section-label">Our Mission</div>
+        <h2>Beyond the <em>Classroom</em></h2>
+        <p>We complement formal coursework by making possible the kinds of ambitious, experimental, and collaborative projects that often exceed its scope.</p>
+        <p>HCA is a space where composers take risks, work across mediums, and develop original projects in conversation with performers, visual artists, technologists, writers, dancers, and directors.</p>
+        <div class="crimson-rule"></div>
+        <p style="font-size:0.9rem; color: var(--light-gray);">With support from the Harvard Music Department and faculty advisor <strong style="color:var(--cream-dim); font-weight:400;">Professor Yvette Jackson</strong></p>
+      </div>
+      <div class="mission-pillars">
+        <div class="pillar reveal">
+          <span class="pillar-num">01</span>
+          <span class="pillar-text">Fostering community among composers across styles and backgrounds</span>
+        </div>
+        <div class="pillar reveal">
+          <span class="pillar-num">02</span>
+          <span class="pillar-text">Creating opportunities for inter-genre collaboration</span>
+        </div>
+        <div class="pillar reveal">
+          <span class="pillar-num">03</span>
+          <span class="pillar-text">Building interdisciplinary partnerships with artists and technologists</span>
+        </div>
+        <div class="pillar reveal">
+          <span class="pillar-num">04</span>
+          <span class="pillar-text">Offering pre-professional artistic experiences and mentorship</span>
+        </div>
+        <div class="pillar reveal">
+          <span class="pillar-num">05</span>
+          <span class="pillar-text">Expanding access to performance and recording opportunities</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Projects -->
+  <section class="featured-section">
+    <div class="featured-inner">
+      <div class="featured-header">
+        <div>
+          <div class="section-label">Selected Work</div>
+          <h2>Recent <em>Projects</em></h2>
+        </div>
+        <a href="#" class="btn-ghost" onclick="showPage('projects'); return false;">View All →</a>
+      </div>
+      <div class="featured-projects-preview">
+        <div class="featured-preview-card reveal">
+          <p class="preview-genre">Chamber · 2024</p>
+          <h3 class="preview-title">Threshold</h3>
+          <p class="preview-desc">A piece for string quartet and live electronics exploring liminal sonic spaces and timbral transformation.</p>
+        </div>
+        <div class="featured-preview-card reveal">
+          <p class="preview-genre">Interdisciplinary · 2024</p>
+          <h3 class="preview-title">Cartography of Sound</h3>
+          <p class="preview-desc">A multimedia collaboration pairing original compositions with generative visual art responding in real time to acoustic data.</p>
+        </div>
+        <div class="featured-preview-card reveal">
+          <p class="preview-genre">Vocal · 2023</p>
+          <h3 class="preview-title">Migrations</h3>
+          <p class="preview-desc">A song cycle for soprano and piano setting contemporary poetry about diaspora, language, and memory.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">HCA</div>
+    <p class="footer-copy">© 2024 Harvard Composers Association · Harvard University</p>
+    <ul class="footer-links">
+      <li><a href="#" onclick="showPage('home'); return false;">Home</a></li>
+      <li><a href="#" onclick="showPage('projects'); return false;">Projects</a></li>
+      <li><a href="#" onclick="showPage('team'); return false;">Team</a></li>
+      <li><a href="#" onclick="showPage('contact'); return false;">Contact</a></li>
+    </ul>
+  </footer>
+</div>
+
+<!-- ===== PROJECTS PAGE ===== -->
+<div class="page" id="page-projects">
+  <div class="page-header">
+    <div class="page-header-bg"></div>
+    <div class="section-label">HCA</div>
+    <h1>Our <em>Projects</em></h1>
+    <p class="page-header-sub">Ambitious, experimental, and collaborative work spanning chamber music, electronic composition, interdisciplinary art, and beyond.</p>
+  </div>
+
+  <div class="projects-grid">
+    <div class="project-card featured reveal">
+      <div class="project-bg"></div>
+      <p class="project-year">2024</p>
+      <span class="project-type">Chamber + Electronics</span>
+      <h3 class="project-title">Threshold</h3>
+      <p class="project-desc">A piece for string quartet and live electronics exploring liminal sonic spaces, timbral transformation, and the boundary between acoustic and digital sound. Premiered at Sanders Theatre.</p>
+      <p class="project-collaborators">Collaborators: Harvard-Radcliffe Orchestra · Dept. of Music</p>
+      <span class="project-arrow">→</span>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-bg"></div>
+      <p class="project-year">2024</p>
+      <span class="project-type">Interdisciplinary</span>
+      <h3 class="project-title">Cartography of Sound</h3>
+      <p class="project-desc">Original compositions paired with generative visual art that responds in real time to acoustic data and performer movement.</p>
+      <p class="project-collaborators">Collaborators: Harvard Art Labs · CS Dept.</p>
+      <span class="project-arrow">→</span>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-bg"></div>
+      <p class="project-year">2024</p>
+      <span class="project-type">Orchestral</span>
+      <h3 class="project-title">New Works Concert</h3>
+      <p class="project-desc">Annual showcase of student orchestral compositions performed by Harvard student ensembles, with post-concert composer talks.</p>
+      <p class="project-collaborators">Ensemble: Harvard-Radcliffe Orchestra</p>
+      <span class="project-arrow">→</span>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-bg"></div>
+      <p class="project-year">2023</p>
+      <span class="project-type">Vocal</span>
+      <h3 class="project-title">Migrations</h3>
+      <p class="project-desc">A song cycle for soprano and piano setting contemporary poetry about diaspora, language, and memory across three continents.</p>
+      <p class="project-collaborators">Text: Harvard poets · Voice faculty</p>
+      <span class="project-arrow">→</span>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-bg"></div>
+      <p class="project-year">2023</p>
+      <span class="project-type">Dance + Music</span>
+      <h3 class="project-title">Kinetics</h3>
+      <p class="project-desc">A collaboration between composers and choreographers creating original scores responding directly to movement vocabularies developed in rehearsal.</p>
+      <p class="project-collaborators">Collaborators: Harvard Dance Center</p>
+      <span class="project-arrow">→</span>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-bg"></div>
+      <p class="project-year">2023</p>
+      <span class="project-type">Recording</span>
+      <h3 class="project-title">Studio Sessions Vol. I</h3>
+      <p class="project-desc">A produced recording of student works in the Lowell Hall Studio — the first HCA-produced album of new compositions available on streaming platforms.</p>
+      <p class="project-collaborators">Producer: Harvard Music Dept.</p>
+      <span class="project-arrow">→</span>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-bg"></div>
+      <p class="project-year">2022</p>
+      <span class="project-type">Theater</span>
+      <h3 class="project-title">Incidental Music Initiative</h3>
+      <p class="project-desc">Pairing student composers with Harvard theater productions to create original scores — from intimate student productions to main-stage shows.</p>
+      <p class="project-collaborators">Collaborators: American Repertory Theater</p>
+      <span class="project-arrow">→</span>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-bg"></div>
+      <p class="project-year">2022</p>
+      <span class="project-type">Electronic</span>
+      <h3 class="project-title">Spectral Garden</h3>
+      <p class="project-desc">An evening of acousmatic and live electronic works performed in spatial audio, transforming Paine Hall into a fully immersive listening environment.</p>
+      <p class="project-collaborators">Venue: Paine Hall</p>
+      <span class="project-arrow">→</span>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-bg"></div>
+      <p class="project-year">2022</p>
+      <span class="project-type">Community</span>
+      <h3 class="project-title">Composing Workshop Series</h3>
+      <p class="project-desc">Semester-long workshop series pairing emerging composers with readings by professional performers, feedback sessions, and public presentations.</p>
+      <p class="project-collaborators">With faculty composer mentors</p>
+      <span class="project-arrow">→</span>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">HCA</div>
+    <p class="footer-copy">© 2024 Harvard Composers Association · Harvard University</p>
+    <ul class="footer-links">
+      <li><a href="#" onclick="showPage('home'); return false;">Home</a></li>
+      <li><a href="#" onclick="showPage('projects'); return false;">Projects</a></li>
+      <li><a href="#" onclick="showPage('team'); return false;">Team</a></li>
+      <li><a href="#" onclick="showPage('contact'); return false;">Contact</a></li>
+    </ul>
+  </footer>
+</div>
+
+<!-- ===== TEAM PAGE ===== -->
+<div class="page" id="page-team">
+  <div class="page-header">
+    <div class="page-header-bg"></div>
+    <div class="section-label">HCA</div>
+    <h1>Meet the <em>Team</em></h1>
+    <p class="page-header-sub">Student composers, organizers, and collaborators driving new music at Harvard.</p>
+  </div>
+
+  <div class="team-section">
+    <p class="team-intro">Our executive board is composed of undergraduate and graduate student composers who believe that new music should be heard, staged, recorded, and reimagined.</p>
+
+    <div class="team-grid">
+      <!-- Placeholder team members — user can replace with real names/bios -->
+      <div class="team-card reveal">
+        <div class="team-card-inner">
+          <div class="team-avatar">
+            <div class="team-avatar-pattern"></div>
+            <span class="team-avatar-initials">P</span>
+          </div>
+          <div class="team-info">
+            <h3 class="team-name">President</h3>
+            <p class="team-role">Executive Board</p>
+            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-card-inner">
+          <div class="team-avatar">
+            <div class="team-avatar-pattern"></div>
+            <span class="team-avatar-initials">VP</span>
+          </div>
+          <div class="team-info">
+            <h3 class="team-name">Vice President</h3>
+            <p class="team-role">Executive Board</p>
+            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-card-inner">
+          <div class="team-avatar">
+            <div class="team-avatar-pattern"></div>
+            <span class="team-avatar-initials">T</span>
+          </div>
+          <div class="team-info">
+            <h3 class="team-name">Treasurer</h3>
+            <p class="team-role">Executive Board</p>
+            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-card-inner">
+          <div class="team-avatar">
+            <div class="team-avatar-pattern"></div>
+            <span class="team-avatar-initials">S</span>
+          </div>
+          <div class="team-info">
+            <h3 class="team-name">Secretary</h3>
+            <p class="team-role">Executive Board</p>
+            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-card-inner">
+          <div class="team-avatar">
+            <div class="team-avatar-pattern"></div>
+            <span class="team-avatar-initials">E</span>
+          </div>
+          <div class="team-info">
+            <h3 class="team-name">Events Director</h3>
+            <p class="team-role">Programming</p>
+            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-card-inner">
+          <div class="team-avatar">
+            <div class="team-avatar-pattern"></div>
+            <span class="team-avatar-initials">O</span>
+          </div>
+          <div class="team-info">
+            <h3 class="team-name">Outreach Chair</h3>
+            <p class="team-role">Community</p>
+            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-card-inner">
+          <div class="team-avatar">
+            <div class="team-avatar-pattern"></div>
+            <span class="team-avatar-initials">R</span>
+          </div>
+          <div class="team-info">
+            <h3 class="team-name">Recording Director</h3>
+            <p class="team-role">Production</p>
+            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-card-inner">
+          <div class="team-avatar">
+            <div class="team-avatar-pattern"></div>
+            <span class="team-avatar-initials">W</span>
+          </div>
+          <div class="team-info">
+            <h3 class="team-name">Webmaster</h3>
+            <p class="team-role">Technology</p>
+            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Faculty Advisor -->
+    <div class="team-advisor">
+      <div class="section-label">Faculty</div>
+      <h2 style="font-size:2rem; margin-bottom:2rem;">Faculty <em>Advisor</em></h2>
+      <div class="advisor-card reveal">
+        <div class="advisor-avatar">YJ</div>
+        <div>
+          <h3 style="font-family:var(--font-display); font-size:1.4rem; font-weight:400; margin-bottom:0.3rem;">Professor Yvette Jackson</h3>
+          <p style="font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--crimson-bright); margin-bottom:0.75rem;">Faculty Advisor · Harvard Music Department</p>
+          <p style="font-size:0.95rem; color:var(--cream-dim); font-weight:300; line-height:1.7;">HCA operates with the generous support of the Harvard Music Department and Professor Jackson, whose mentorship helps connect student composers with professional networks, resources, and performance opportunities.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">HCA</div>
+    <p class="footer-copy">© 2024 Harvard Composers Association · Harvard University</p>
+    <ul class="footer-links">
+      <li><a href="#" onclick="showPage('home'); return false;">Home</a></li>
+      <li><a href="#" onclick="showPage('projects'); return false;">Projects</a></li>
+      <li><a href="#" onclick="showPage('team'); return false;">Team</a></li>
+      <li><a href="#" onclick="showPage('contact'); return false;">Contact</a></li>
+    </ul>
+  </footer>
+</div>
+
+<!-- ===== CONTACT PAGE ===== -->
+<div class="page" id="page-contact">
+  <div class="page-header">
+    <div class="page-header-bg"></div>
+    <div class="section-label">HCA</div>
+    <h1>Get in <em>Touch</em></h1>
+    <p class="page-header-sub">Whether you're a composer looking to get involved, a performer interested in collaboration, or a prospective partner — we'd love to hear from you.</p>
+  </div>
+
+  <div class="contact-section">
+    <div class="contact-info">
+      <div class="section-label">Contact</div>
+      <h3>Let's build something <em style="color:var(--crimson-bright);">together</em></h3>
+      <p>HCA welcomes composers, performers, visual artists, technologists, writers, dancers, and directors. If you want to make ambitious new work, this is your home.</p>
+
+      <div class="contact-detail">
+        <span class="contact-detail-label">Email</span>
+        <span class="contact-detail-value">hca@college.harvard.edu</span>
+      </div>
+      <div class="contact-detail">
+        <span class="contact-detail-label">Location</span>
+        <span class="contact-detail-value">Music Department<br>Harvard University<br>Cambridge, MA 02138</span>
+      </div>
+      <div class="contact-detail">
+        <span class="contact-detail-label">Meetings</span>
+        <span class="contact-detail-value">Weekly · Paine Hall<br>Add your meeting time here</span>
+      </div>
+
+      <div style="margin-top: 2.5rem;">
+        <p style="font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--crimson-bright); margin-bottom:1rem;">Follow Us</p>
+        <div style="display:flex; gap:1rem;">
+          <a href="#" class="btn-ghost" style="padding:0.6rem 1rem; font-size:0.62rem;">Instagram</a>
+          <a href="#" class="btn-ghost" style="padding:0.6rem 1rem; font-size:0.62rem;">Facebook</a>
+          <a href="#" class="btn-ghost" style="padding:0.6rem 1rem; font-size:0.62rem;">SoundCloud</a>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Message Us</div>
+      <div class="contact-form">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-input" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">I am a...</label>
+          <select class="form-select">
+            <option value="">Select one</option>
+            <option>Composer interested in joining</option>
+            <option>Performer interested in collaborating</option>
+            <option>Visual / interdisciplinary artist</option>
+            <option>Faculty or staff</option>
+            <option>Press or media</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="Tell us about yourself and what you'd like to work on..."></textarea>
+        </div>
+        <button class="btn-primary" style="align-self:flex-start; border:none; cursor:none;" onclick="handleSubmit(this)">Send Message →</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">HCA</div>
+    <p class="footer-copy">© 2024 Harvard Composers Association · Harvard University</p>
+    <ul class="footer-links">
+      <li><a href="#" onclick="showPage('home'); return false;">Home</a></li>
+      <li><a href="#" onclick="showPage('projects'); return false;">Projects</a></li>
+      <li><a href="#" onclick="showPage('team'); return false;">Team</a></li>
+      <li><a href="#" onclick="showPage('contact'); return false;">Contact</a></li>
+    </ul>
+  </footer>
+</div>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animateCursor() {
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+  document.querySelectorAll('a, button, input, select, textarea, .project-card, .team-card, .pillar, .featured-preview-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%,-50%) scale(2.5)'; ring.style.width = '60px'; ring.style.height = '60px'; ring.style.borderColor = 'rgba(196,30,58,0.7)'; });
+    el.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.width = '36px'; ring.style.height = '36px'; ring.style.borderColor = 'rgba(165,28,48,0.5)'; });
+  });
+
+  // Nav scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Page navigation
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    document.getElementById('nav-' + name).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(initReveal, 100);
+  }
+
+  // Scroll reveal
+  function initReveal() {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => {
+      el.classList.remove('visible');
+      observer.observe(el);
+    });
+  }
+  initReveal();
+
+  // Form submit
+  function handleSubmit(btn) {
+    btn.textContent = 'Sent ✓';
+    btn.style.background = 'var(--crimson-dim)';
+    btn.style.pointerEvents = 'none';
+  }
+</script>
+</body>
+</html>
