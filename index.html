@@ -74,6 +74,8 @@
     backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(165,28,48,0.2);
   }
+  .nav-logo-text { display: inline; }
+  @media (max-width: 768px) { .nav-logo-text { display: none; } }
   .nav-logo {
     font-family: var(--font-display);
     font-size: 1.1rem;
@@ -115,7 +117,7 @@
 
   /* ========== PAGES ========== */
   .page { display: none; min-height: 100vh; }
-  .page.active { display: block; }
+  .page.active { display: block; animation: pageFadeIn 0.5s ease forwards; }
 
   /* ========== HOME PAGE ========== */
   .hero {
@@ -724,7 +726,6 @@
 
 
   /* Page transition */
-  .page.active { animation: pageFadeIn 0.5s ease forwards; }
   @keyframes pageFadeIn {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -779,6 +780,60 @@
   }
   .team-card:hover .team-avatar::after { opacity: 1; }
 
+
+  /* ========== MOBILE RESPONSIVE ========== */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-logo span, .nav-logo { font-size: 0rem; }
+    .nav-logo-mark { display: flex; }
+    .nav-links { gap: 1.2rem; }
+    .nav-links a { font-size: 0.62rem; letter-spacing: 0.08em; }
+
+    .hero { padding: 0 1.5rem 4rem; }
+    .hero-title { font-size: clamp(3rem, 13vw, 5rem); }
+    .hero-sub { font-size: 1rem; }
+    .hero-actions { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .hero-scroll-hint { display: none; }
+
+    section { padding: 4rem 1.5rem; }
+
+    .mission-inner { grid-template-columns: 1fr; gap: 3rem; }
+
+    .featured-projects-preview { grid-template-columns: 1fr !important; }
+    .featured-projects-preview .featured-preview-card[style*="span 2"] { grid-column: span 1 !important; }
+
+    .page-header { padding: 8rem 1.5rem 2rem; }
+
+    .projects-grid { padding: 1rem 1.5rem 4rem; grid-template-columns: 1fr !important; }
+    .project-card.featured[style*="span 3"] { grid-column: span 1 !important; display: block !important; }
+    .project-card.featured[style*="span 3"] > div:nth-child(2) { margin-top: 2rem; }
+
+    /* Paracosms banner */
+    div[style*="justify-content: space-between"][style*="border-left"] {
+      flex-direction: column !important;
+      padding: 1.5rem !important;
+      text-align: left;
+    }
+
+    .team-grid { grid-template-columns: 1fr 1fr !important; }
+    .team-section { padding: 2rem 1.5rem 4rem; }
+
+    .contact-section { grid-template-columns: 1fr !important; gap: 3rem; padding: 2rem 1.5rem 4rem; }
+
+    footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+
+    .btn-primary, .btn-ghost { font-size: 0.65rem; padding: 0.75rem 1.5rem; }
+  }
+
+  @media (max-width: 480px) {
+    .nav-links { gap: 0.8rem; }
+    .nav-links a { font-size: 0.58rem; }
+    .hero-title { font-size: clamp(2.5rem, 14vw, 4rem); }
+    .team-grid { grid-template-columns: 1fr !important; }
+    .advisor-card { flex-direction: column; gap: 1.5rem; }
+  }
+
 </style>
 </head>
 <body>
@@ -790,7 +845,7 @@
 <nav id="mainNav">
   <a href="#" class="nav-logo" onclick="showPage('home'); return false;">
     <div class="nav-logo-mark">HCA</div>
-    Harvard Composers Association
+    <span class="nav-logo-text">Harvard Composers Association</span>
   </a>
   <ul class="nav-links">
     <li><a href="#" onclick="showPage('home'); return false;" id="nav-home" class="active">Home</a></li>
@@ -869,20 +924,15 @@
         </div>
         <a href="#" class="btn-ghost" onclick="showPage('projects'); return false;">View All →</a>
       </div>
-      <div class="featured-projects-preview">
-        <div class="featured-preview-card reveal" style="border-color: rgba(165,28,48,0.35); grid-column: span 2; background: linear-gradient(135deg, rgba(165,28,48,0.07) 0%, var(--dark-gray) 60%);">
+      <div class="featured-projects-preview" style="grid-template-columns: 1fr;">
+        <div class="featured-preview-card reveal" style="border-color: rgba(165,28,48,0.35); background: linear-gradient(135deg, rgba(165,28,48,0.07) 0%, var(--dark-gray) 60%);">
           <p class="preview-genre" style="display:flex; align-items:center; gap:0.75rem;">
             <span style="background:var(--crimson); color:var(--cream); font-family:var(--font-mono); font-size:0.58rem; letter-spacing:0.1em; padding:0.2rem 0.5rem;">NOW</span>
             Interdisciplinary · Spring 2026
           </p>
-          <h3 class="preview-title" style="font-size:2rem;">Paracosms: Building Audiovisual Worlds</h3>
-          <p class="preview-desc">An HCA × Conflux Art-Tech Collective collaboration — 7 original string quartets by Harvard composers performed live alongside real-time audiovisual projections at Holden Chapel. Sound shapes visuals; pitch, timbre, and volume drive color, form, and motion.</p>
-          <p style="font-family:var(--font-mono); font-size:0.62rem; color:var(--crimson-bright); letter-spacing:0.08em; margin-top:1rem;">May 1 · Holden Chapel · Harvard Yard</p>
-        </div>
-        <div class="featured-preview-card reveal">
-          <p class="preview-genre">Recording · Spring 2025</p>
-          <h3 class="preview-title">String Orchestra Recording</h3>
-          <p class="preview-desc">A professional studio recording of original works for string orchestra composed and performed by HCA members.</p>
+          <h3 class="preview-title" style="font-size:1.6rem;">Paracosms: Building Audiovisual Worlds</h3>
+          <p class="preview-desc">7 new works for string quartet, electronics, and real-time visual projection — performed live at Holden Chapel.</p>
+          <p style="font-family:var(--font-mono); font-size:0.62rem; color:var(--crimson-bright); letter-spacing:0.08em; margin-top:1rem;">May 1 · Holden Chapel · Harvard Yard &nbsp;·&nbsp; <a href="#" onclick="showPage('projects'); return false;" style="color:var(--crimson-bright); text-decoration:underline; text-underline-offset:3px;">See full project →</a></p>
         </div>
       </div>
     </div>
@@ -907,24 +957,6 @@
     <div class="section-label">HCA</div>
     <h1>Our <em>Projects</em></h1>
     <p class="page-header-sub">Ambitious, experimental, and collaborative work spanning chamber music, electronic composition, interdisciplinary art, and beyond.</p>
-  </div>
-
-  <!-- Paracosms Feature Banner -->
-  <div style="margin: 0 0 2px; background: var(--near-black); border: 1px solid rgba(165,28,48,0.3); border-left: 3px solid var(--crimson-bright); padding: 2.5rem 4rem; display: flex; justify-content: space-between; align-items: center; gap: 3rem;">
-    <div>
-      <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
-        <span style="background:var(--crimson); color:var(--cream); font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.12em; padding:0.3rem 0.75rem; text-transform:uppercase;">Current Project</span>
-        <span style="font-family:var(--font-mono); font-size:0.62rem; color:var(--light-gray); letter-spacing:0.1em;">Spring 2026</span>
-      </div>
-      <h2 style="font-size:clamp(1.8rem,3.5vw,3rem); margin-bottom:0.75rem; line-height:1.1;">Paracosms: <em>Building Audiovisual Worlds</em></h2>
-      <p style="font-size:1rem; color:var(--cream-dim); font-weight:300; max-width:600px; line-height:1.7;">An HCA × Conflux Art-Tech Collective interdisciplinary performance — new music for string quartet meets real-time audiovisual projection. Sound drives visuals: pitch, timbre, volume, and beat shape color, opacity, form, and motion in real time.</p>
-    </div>
-    <div style="flex-shrink:0; text-align:right;">
-      <p style="font-family:var(--font-mono); font-size:0.62rem; color:var(--crimson-bright); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:0.4rem;">Final Performance</p>
-      <p style="font-family:var(--font-display); font-size:2rem; font-weight:300; line-height:1.1;">May 1, 2026</p>
-      <p style="font-size:0.9rem; color:var(--cream-dim); font-weight:300;">Holden Chapel · 12–1pm</p>
-      <p style="font-size:0.85rem; color:var(--light-gray); font-weight:300; margin-top:0.25rem;">Harvard Yard, Cambridge MA</p>
-    </div>
   </div>
 
   <div class="projects-grid">
@@ -1035,7 +1067,6 @@
     <p class="team-intro">Our executive board is composed of undergraduate and graduate student composers who believe that new music should be heard, staged, recorded, and reimagined.</p>
 
     <div class="team-grid">
-      <!-- Placeholder team members — user can replace with real names/bios -->
       <div class="team-card reveal">
         <div class="team-card-inner">
           <div class="team-avatar">
@@ -1045,7 +1076,7 @@
           <div class="team-info">
             <h3 class="team-name">Sage Shurman</h3>
             <p class="team-role">Co-President</p>
-            <p class="team-bio">Co-president of HCA and driving force behind Paracosms, the Spring 2026 HCA × Conflux interdisciplinary performance.</p>
+            <p class="team-bio">[insert bio]</p>
           </div>
         </div>
       </div>
@@ -1058,85 +1089,7 @@
           <div class="team-info">
             <h3 class="team-name">Clea Gaïtas Sur</h3>
             <p class="team-role">Co-President</p>
-            <p class="team-bio">Co-president of HCA, working alongside Sage to lead the association and build new interdisciplinary opportunities for student composers.</p>
-          </div>
-        </div>
-      </div>
-      <div class="team-card reveal">
-        <div class="team-card-inner">
-          <div class="team-avatar">
-            <div class="team-avatar-pattern"></div>
-            <span class="team-avatar-initials">T</span>
-          </div>
-          <div class="team-info">
-            <h3 class="team-name">Treasurer</h3>
-            <p class="team-role">Executive Board</p>
-            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
-          </div>
-        </div>
-      </div>
-      <div class="team-card reveal">
-        <div class="team-card-inner">
-          <div class="team-avatar">
-            <div class="team-avatar-pattern"></div>
-            <span class="team-avatar-initials">S</span>
-          </div>
-          <div class="team-info">
-            <h3 class="team-name">Secretary</h3>
-            <p class="team-role">Executive Board</p>
-            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
-          </div>
-        </div>
-      </div>
-      <div class="team-card reveal">
-        <div class="team-card-inner">
-          <div class="team-avatar">
-            <div class="team-avatar-pattern"></div>
-            <span class="team-avatar-initials">E</span>
-          </div>
-          <div class="team-info">
-            <h3 class="team-name">Events Director</h3>
-            <p class="team-role">Programming</p>
-            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
-          </div>
-        </div>
-      </div>
-      <div class="team-card reveal">
-        <div class="team-card-inner">
-          <div class="team-avatar">
-            <div class="team-avatar-pattern"></div>
-            <span class="team-avatar-initials">O</span>
-          </div>
-          <div class="team-info">
-            <h3 class="team-name">Outreach Chair</h3>
-            <p class="team-role">Community</p>
-            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
-          </div>
-        </div>
-      </div>
-      <div class="team-card reveal">
-        <div class="team-card-inner">
-          <div class="team-avatar">
-            <div class="team-avatar-pattern"></div>
-            <span class="team-avatar-initials">R</span>
-          </div>
-          <div class="team-info">
-            <h3 class="team-name">Recording Director</h3>
-            <p class="team-role">Production</p>
-            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
-          </div>
-        </div>
-      </div>
-      <div class="team-card reveal">
-        <div class="team-card-inner">
-          <div class="team-avatar">
-            <div class="team-avatar-pattern"></div>
-            <span class="team-avatar-initials">W</span>
-          </div>
-          <div class="team-info">
-            <h3 class="team-name">Webmaster</h3>
-            <p class="team-role">Technology</p>
-            <p class="team-bio">Add your name, year, concentration, and a brief note about your compositional interests here.</p>
+            <p class="team-bio">[insert bio]</p>
           </div>
         </div>
       </div>
@@ -1184,27 +1137,6 @@
       <h3>Let's build something <em style="color:var(--crimson-bright);">together</em></h3>
       <p>HCA welcomes composers, performers, visual artists, technologists, writers, dancers, and directors. If you want to make ambitious new work, this is your home.</p>
 
-      <div class="contact-detail">
-        <span class="contact-detail-label">Email</span>
-        <span class="contact-detail-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7102101614021904031c101f31121e1d1d1416145f191003071003155f141504">[email&#160;protected]</a></span>
-      </div>
-      <div class="contact-detail">
-        <span class="contact-detail-label">Location</span>
-        <span class="contact-detail-value">Music Department<br>Harvard University<br>Cambridge, MA 02138</span>
-      </div>
-      <div class="contact-detail">
-        <span class="contact-detail-label">Meetings</span>
-        <span class="contact-detail-value">Weekly · Paine Hall<br>Add your meeting time here</span>
-      </div>
-
-      <div style="margin-top: 2.5rem;">
-        <p style="font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--crimson-bright); margin-bottom:1rem;">Follow Us</p>
-        <div style="display:flex; gap:1rem;">
-          <a href="#" class="btn-ghost" style="padding:0.6rem 1rem; font-size:0.62rem;">Instagram</a>
-          <a href="#" class="btn-ghost" style="padding:0.6rem 1rem; font-size:0.62rem;">Facebook</a>
-          <a href="#" class="btn-ghost" style="padding:0.6rem 1rem; font-size:0.62rem;">SoundCloud</a>
-        </div>
-      </div>
     </div>
 
     <div>
@@ -1251,7 +1183,7 @@
   </footer>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // Custom cursor
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursorRing');
